@@ -1,5 +1,5 @@
 {
-  "name": "amap-proxy",
+  "name": "@huangjs888/amap-proxy",
   "version": "1.0.0",
   "description": "在线高德地图，局域网内代理",
   "main": "index.js",
@@ -11,6 +11,7 @@
     "url": "git+https://github.com/huangjs888/amap-proxy.git"
   },
   "keywords": [
+    "huangjs888",
     "amap",
     "proxy",
     "amap-proxy"
