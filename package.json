@@ -1,0 +1,24 @@
+{
+  "name": "amap-proxy",
+  "version": "1.0.0",
+  "description": "在线高德地图，局域网内代理",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huangjs888/amap-proxy.git"
+  },
+  "keywords": [
+    "amap",
+    "proxy",
+    "amap-proxy"
+  ],
+  "author": "Huangjs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/huangjs888/amap-proxy/issues"
+  },
+  "homepage": "https://github.com/huangjs888/amap-proxy#readme"
+}
