@@ -1,0 +1,11 @@
+.editorconfig
+.eslintignore
+.gitignore
+.npmignore
+.prettierignore
+stats.json
+node_modules/
+/coverage
+/example/build
+/lib
+/dist
