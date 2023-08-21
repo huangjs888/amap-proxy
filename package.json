@@ -2,24 +2,34 @@
   "name": "@huangjs888/amap-proxy",
   "version": "1.1.0",
   "description": "在线高德地图，局域网内代理",
-  "main": "index.js",
-  "module": "index.js",
-  "unpkg": "dist/amap-proxy.min.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "unpkg": "dist/d3.chart.min.js",
   "exports": {
-    "umd": "./dist/amap-proxy.min.js",
-    "default": "./index.js"
+    "umd": "./dist/d3.chart.min.js",
+    "import": "./es/index.js",
+    "default": "./lib/index.js"
   },
   "scripts": {
-    "start": "npm run lint && npm run dist",
-    "clean": "rimraf dist",
-    "lint": "./node_modules/.bin/eslint -f stylish ./src/*.js",
-    "dist": "npm run clean && webpack --config webpack.config.js --mode production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build",
+    "build": "npm run clean && npm run lint && npm run build:esm && npm run build:cjs && npm run build:umd",
+    "build:merge": "npm run clean && npm run lint && npm run build:esm:merge && npm run build:cjs:merge && npm run build:umd",
+    "build:cjs": "cross-env MOD_ENV=cjs babel --extensions .js src -d lib",
+    "build:esm": "cross-env MOD_ENV=esm babel --extensions .js src -d es",
+    "build:cjs:merge": "cross-env NODE_ENV=development MOD_ENV=cjs webpack --config webpack.config.js",
+    "build:esm:merge": "cross-env NODE_ENV=development MOD_ENV=esm webpack --config webpack.config.js",
+    "build:umd": "npm run build:umd:dev && npm run build:umd:prod",
+    "build:umd:dev": "cross-env NODE_ENV=development MOD_ENV=umd webpack --config webpack.config.js",
+    "build:umd:prod": "cross-env NODE_ENV=production MOD_ENV=umd webpack --config webpack.config.js",
+    "clean": "rimraf lib && rimraf dist && rimraf es",
+    "lint": "eslint . --ext .js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/huangjs888/amap-proxy.git"
-  },
+  "files": [
+    "es",
+    "dist",
+    "lib",
+    "README.md"
+  ],
   "keywords": [
     "huangjs",
     "huangjs888",
@@ -27,22 +37,35 @@
     "proxy",
     "amap-proxy"
   ],
-  "author": "Huangjs",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huangjs888/amap-proxy.git"
+  },
   "bugs": {
     "url": "https://github.com/huangjs888/amap-proxy/issues"
   },
   "homepage": "https://github.com/huangjs888/amap-proxy#readme",
-  "dependencies": {},
+  "author": {
+    "name": "Huangjs",
+    "email": "1170384651@qq.com"
+  },
+  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15.8",
+    "@babel/eslint-parser": "^7.15.8",
     "@babel/plugin-transform-runtime": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
-    "@babel/runtime-corejs3": "^7.15.4",
     "babel-loader": "^8.2.3",
+    "cross-env": "^7.0.3",
     "eslint": "^8.1.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.1",
     "webpack": "^5.60.0",
     "webpack-cli": "^4.9.1"
+  },
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.15.4"
   }
 }

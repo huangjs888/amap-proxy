@@ -1,3 +1,4 @@
+function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 /*
  * @Author: Huangjs
  * @Date: 2021-10-10 15:07:28
@@ -11,32 +12,19 @@ const windowWrapper = function windowWrapper(win, convertUrl) {
     const BlobWrapper = win.Blob;
     win.Blob = function Blob(buffer, options, ...args) {
       const injectCode = options && options.type && options.type.indexOf('text/javascript') !== -1;
-      return new (Function.prototype.bind.apply(BlobWrapper, [
-        null,
-        injectCode
-          ? [`(${windowWrapper.toString()})(self, ${convertUrl.toString()});\n`].concat(buffer)
-          : buffer,
-        options,
-        ...args,
-      ]))();
+      return new (Function.prototype.bind.apply(BlobWrapper, [null, injectCode ? [`(${windowWrapper.toString()})(self, ${convertUrl.toString()});\n`].concat(buffer) : buffer, options, ...args]))();
     };
   }
   if (win.Request) {
     const RequestWrapper = win.Request;
     win.Request = function Request(url, ...args) {
-      return new (Function.prototype.bind.apply(
-        RequestWrapper,
-        [null, typeof url === 'string' ? convertUrl(url) : url].concat(args),
-      ))();
+      return new (Function.prototype.bind.apply(RequestWrapper, [null, typeof url === 'string' ? convertUrl(url) : url].concat(args)))();
     };
   }
   if (win.fetch) {
     const fetchWrapper = win.fetch;
     win.fetch = function fetch(url, ...args) {
-      return fetchWrapper.apply(
-        this,
-        [typeof url === 'string' ? convertUrl(url) : url].concat(args),
-      );
+      return fetchWrapper.apply(this, [typeof url === 'string' ? convertUrl(url) : url].concat(args));
     };
   }
   if (win.XMLHttpRequest) {
@@ -46,16 +34,12 @@ const windowWrapper = function windowWrapper(win, convertUrl) {
     };
   }
 };
-
 const documentWrapper = function documentWrapper(win, convertUrl) {
   if (win.document) {
     if (win.document.write) {
       const writeWrapper = win.document.write;
       win.document.write = function write(...args) {
-        return writeWrapper.apply(
-          this,
-          args.map((value) => convertUrl(value)),
-        );
+        return writeWrapper.apply(this, args.map(value => convertUrl(value)));
       };
     }
     if (typeof document.createTextNode === 'function') {
@@ -84,8 +68,7 @@ const documentWrapper = function documentWrapper(win, convertUrl) {
   if (win.HTMLElement) {
     const style = Object.getOwnPropertyDescriptor(win.HTMLElement.prototype, 'style');
     if (style) {
-      Object.defineProperty(win.HTMLElement.prototype, 'style', {
-        ...style,
+      Object.defineProperty(win.HTMLElement.prototype, 'style', _extends({}, style, {
         set: function set(value, ...args) {
           if (value.background) {
             value.background = convertUrl(value.background);
@@ -105,18 +88,14 @@ const documentWrapper = function documentWrapper(win, convertUrl) {
           if (style.set) {
             style.set.apply(this, [value].concat(args));
           }
-        },
-      });
+        }
+      }));
     }
   }
   if (win.HTMLStyleElement) {
-    const styleSheet = Object.getOwnPropertyDescriptor(
-      win.HTMLStyleElement.prototype,
-      'styleSheet',
-    );
+    const styleSheet = Object.getOwnPropertyDescriptor(win.HTMLStyleElement.prototype, 'styleSheet');
     if (styleSheet) {
-      Object.defineProperty(win.HTMLStyleElement.prototype, 'styleSheet', {
-        ...styleSheet,
+      Object.defineProperty(win.HTMLStyleElement.prototype, 'styleSheet', _extends({}, styleSheet, {
         set: function set(value, ...args) {
           if (value.cssText) {
             value.cssText = convertUrl(value.cssText);
@@ -124,74 +103,61 @@ const documentWrapper = function documentWrapper(win, convertUrl) {
           if (styleSheet.set) {
             styleSheet.set.apply(this, [value].concat(args));
           }
-        },
-      });
+        }
+      }));
     }
   }
-  [
-    {
-      element: [
-        'HTMLScriptElement',
-        'HTMLImageElement',
-        'HTMLIFrameElement',
-        'HTMLFrameElement',
-        'HTMLMediaElement',
-        'HTMLEmbedElement',
-        'HTMLSourceElement', // srcset
-        'HTMLInputElement',
-      ],
-      property: ['src'],
-    },
-    {
-      element: ['HTMLLinkElement', 'HTMLAnchorElement', 'HTMLAreaElement'],
-      property: ['href'],
-    },
-    {
-      element: ['HTMLElement'],
-      property: ['innerText', 'outerText'],
-    },
-    {
-      element: ['Element'],
-      property: ['innerHTML', 'outerHTML'],
-    },
-    {
-      element: ['CharacterData'],
-      property: ['data'],
-    },
-    {
-      element: ['Attr'],
-      property: ['value'],
-    },
-    {
-      element: ['Node'],
-      property: ['textContent'],
-    },
-  ].forEach(({ element, property }) => {
-    element.forEach((el) => {
+  [{
+    element: ['HTMLScriptElement', 'HTMLImageElement', 'HTMLIFrameElement', 'HTMLFrameElement', 'HTMLMediaElement', 'HTMLEmbedElement', 'HTMLSourceElement',
+    // srcset
+    'HTMLInputElement'],
+    property: ['src']
+  }, {
+    element: ['HTMLLinkElement', 'HTMLAnchorElement', 'HTMLAreaElement'],
+    property: ['href']
+  }, {
+    element: ['HTMLElement'],
+    property: ['innerText', 'outerText']
+  }, {
+    element: ['Element'],
+    property: ['innerHTML', 'outerHTML']
+  }, {
+    element: ['CharacterData'],
+    property: ['data']
+  }, {
+    element: ['Attr'],
+    property: ['value']
+  }, {
+    element: ['Node'],
+    property: ['textContent']
+  }].forEach(({
+    element,
+    property
+  }) => {
+    element.forEach(el => {
       if (win[el]) {
-        const { prototype } = win[el];
-        property.forEach((py) => {
+        const {
+          prototype
+        } = win[el];
+        property.forEach(py => {
           const descriptor = Object.getOwnPropertyDescriptor(prototype, py);
           if (descriptor) {
-            Object.defineProperty(prototype, py, {
-              ...descriptor,
+            Object.defineProperty(prototype, py, _extends({}, descriptor, {
               set: function set(value, ...args) {
                 if (descriptor.set) {
                   descriptor.set.apply(this, [convertUrl(value)].concat(args));
                 }
-              },
-            });
+              }
+            }));
           }
         });
       }
     });
   });
 };
-
 export default function ap(proxyUrl, regExp) {
   const win = window || global || self || this || {};
-  const convertUrl = (url) =>
-    typeof url === 'string' ? url.replace(regExp, `${proxyUrl}$2`) : url;
+  const convertUrl = url => typeof url === 'string' ? url.replace(regExp, `${proxyUrl}$2`) : url;
   convertUrl.toString = function toString() {
     return `function convertUrl(url) {
       return typeof url === 'string' ? url.replace(${regExp}, ''.concat('${proxyUrl}', '$2')) : url;
